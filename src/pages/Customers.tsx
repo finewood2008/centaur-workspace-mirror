@@ -420,14 +420,73 @@ export default function Customers() {
 
                 {/* Communication Timeline */}
                 <div className="p-4 border-b border-border">
-                  <h4 className="text-xs font-semibold mb-3 flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-primary" /> 沟通记录
-                  </h4>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-semibold flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-primary" /> 沟通记录
+                    </h4>
+                    <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={() => setShowAddComm(!showAddComm)}>
+                      <Plus className="w-3 h-3 mr-0.5" /> 新增记录
+                    </Button>
+                  </div>
+
+                  {/* Add Communication Form */}
+                  {showAddComm && (
+                    <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5 space-y-2">
+                      <div className="text-[10px] font-semibold text-primary mb-1">新增沟通记录</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] text-muted-foreground">类型</label>
+                          <Select value={commForm.type} onValueChange={(v) => setCommForm({ ...commForm, type: v as typeof commForm.type })}>
+                            <SelectTrigger className="h-7 text-xs mt-0.5"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="email">📧 邮件</SelectItem>
+                              <SelectItem value="chat">💬 即时消息</SelectItem>
+                              <SelectItem value="call">📞 通话</SelectItem>
+                              <SelectItem value="meeting">🤝 会议</SelectItem>
+                              <SelectItem value="document">📄 文档</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-[10px] text-muted-foreground">方向</label>
+                          <Select value={commForm.direction} onValueChange={(v) => setCommForm({ ...commForm, direction: v as "inbound" | "outbound" })}>
+                            <SelectTrigger className="h-7 text-xs mt-0.5"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="outbound">→ 发出</SelectItem>
+                              <SelectItem value="inbound">← 收到</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {(commForm.type === "email" || commForm.type === "meeting") && (
+                        <div>
+                          <label className="text-[10px] text-muted-foreground">主题</label>
+                          <Input className="h-7 text-xs mt-0.5" value={commForm.subject} onChange={(e) => setCommForm({ ...commForm, subject: e.target.value })} placeholder="邮件/会议主题..." />
+                        </div>
+                      )}
+                      <div>
+                        <label className="text-[10px] text-muted-foreground">内容摘要 *</label>
+                        <textarea
+                          className="w-full mt-0.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[60px] resize-none"
+                          value={commForm.summary}
+                          onChange={(e) => setCommForm({ ...commForm, summary: e.target.value })}
+                          placeholder="记录沟通内容要点..."
+                        />
+                      </div>
+                      <div className="flex gap-2 justify-end">
+                        <Button size="sm" variant="ghost" className="h-6 text-[10px]" onClick={() => setShowAddComm(false)}>取消</Button>
+                        <Button size="sm" className="h-6 text-[10px]" onClick={addCommunication}>
+                          <Save className="w-3 h-3 mr-0.5" /> 保存
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="relative pl-6">
                     {/* Timeline line */}
                     <div className="absolute left-[9px] top-2 bottom-2 w-px bg-border" />
                     <div className="space-y-3">
-                      {mockCommunications.map((comm) => {
+                      {communications.map((comm) => {
                         const config = commTypeConfig[comm.type];
                         const Icon = config.icon;
                         const isExpanded = expandedComm === comm.id;
