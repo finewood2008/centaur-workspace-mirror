@@ -111,6 +111,7 @@ export default function Dashboard() {
         <ActivityFeed activities={activities} selectedSource={selectedSource} />
       </motion.div>
       <AIStrategyDrawer open={strategyDrawerOpen} onOpenChange={setStrategyDrawerOpen} />
+      <ResponseTimeDialog open={responseDialogOpen} onOpenChange={setResponseDialogOpen} />
     </motion.div>
   );
 }
