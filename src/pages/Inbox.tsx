@@ -210,9 +210,6 @@ export default function Inbox() {
   }, [messageInput, selectedId, selectedInquiry]);
 
   const chCfg = selectedInquiry ? channelConfig[selectedInquiry.channel] : null;
-  const isEmail = selectedInquiry?.channel === "Email";
-  const isSocial = selectedInquiry?.channel === "Instagram" || selectedInquiry?.channel === "Facebook" || selectedInquiry?.channel === "Twitter";
-  const isWebsite = selectedInquiry?.channel === "独立站";
 
   return (
     <div className="flex h-[calc(100vh-7rem)] gap-0 -m-4 lg:-m-6">
