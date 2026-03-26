@@ -13,7 +13,10 @@ import SocialAccounts from "./pages/social/SocialAccounts";
 import AssetLibrary from "./pages/social/AssetLibrary";
 import ContentCreate from "./pages/social/ContentCreate";
 import ContentCalendar from "./pages/social/ContentCalendar";
-import AdsCommand from "./pages/AdsCommand";
+import AdsLayout from "./components/ads/AdsLayout";
+import AdsAccounts from "./pages/ads/AdsAccounts";
+import AdsDashboard from "./pages/ads/AdsDashboard";
+import AdsApprovals from "./pages/ads/AdsApprovals";
 import EmailMarketing from "./pages/EmailMarketing";
 import Customers from "./pages/Customers";
 import Products from "./pages/Products";
@@ -39,7 +42,12 @@ const App = () => (
                 <Route path="create" element={<ContentCreate />} />
                 <Route path="calendar" element={<ContentCalendar />} />
               </Route>
-              <Route path="/ads" element={<AdsCommand />} />
+              <Route path="/ads" element={<AdsLayout />}>
+                <Route index element={<Navigate to="accounts" replace />} />
+                <Route path="accounts" element={<AdsAccounts />} />
+                <Route path="dashboard" element={<AdsDashboard />} />
+                <Route path="approvals" element={<AdsApprovals />} />
+              </Route>
               <Route path="/email" element={<EmailMarketing />} />
               <Route path="/customers" element={<Customers />} />
               <Route path="/products" element={<Products />} />
