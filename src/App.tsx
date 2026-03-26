@@ -29,7 +29,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/inbox" element={<Inbox />} />
-              <Route path="/ai-sales" element={<AISales />} />
+              
               <Route path="/social" element={<SocialContent />} />
               <Route path="/ads" element={<AdsCommand />} />
               <Route path="/email" element={<EmailMarketing />} />
