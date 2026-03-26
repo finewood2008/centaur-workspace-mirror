@@ -72,7 +72,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className={cn("px-3 mb-1", collapsed && "px-0")}>
             {!collapsed && <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 mb-1">核心模块</div>}
             {mainNavItems.map((item) => (
-              <NavLink key={item.href} item={item} active={location.pathname === item.href} collapsed={collapsed} />
+              <NavLink key={item.href} item={item} active={item.href === "/" ? location.pathname === "/" : location.pathname.startsWith(item.href)} collapsed={collapsed} />
             ))}
           </div>
           <div className="mx-3 my-2 border-t border-sidebar-border" />
