@@ -145,7 +145,7 @@ function AccountSection() {
 
 /* === System === */
 function SystemSection() {
-  const [theme, setTheme] = useState("dark");
+  const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState({ desktop: true, sound: true, email: true, wechat: false });
 
   return (
