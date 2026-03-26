@@ -23,7 +23,11 @@ import EmailCreate from "./pages/email/EmailCreate";
 import EmailCampaigns from "./pages/email/EmailCampaigns";
 import EmailAnalytics from "./pages/email/EmailAnalytics";
 import Customers from "./pages/Customers";
+import Customers from "./pages/Customers";
 import Products from "./pages/Products";
+import DataCenter from "./pages/data/DataCenter";
+import DataBackup from "./pages/data/DataBackup";
+import DataExport from "./pages/data/DataExport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
