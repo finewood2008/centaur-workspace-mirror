@@ -163,15 +163,15 @@ export default function Customers() {
     const typePrefix = commForm.type === "email" ? "email" : commForm.type === "chat" ? "chat" : commForm.type === "call" ? "call" : commForm.type === "meeting" ? "meeting" : "doc";
     const newComm = {
       id: newId,
-      type: commForm.type,
-      direction: commForm.direction,
+      type: commForm.type as "email",
+      direction: commForm.direction as "outbound",
       time: timeStr,
       summary: commForm.summary,
       subject: commForm.subject,
       filePath: `${typePrefix}-${String(newId).padStart(3, "0")}.json`,
       hasAttachment: false,
     };
-    setCommunications([newComm, ...communications]);
+    setCommunications([newComm as typeof communications[0], ...communications]);
     setCommForm({ type: "email", direction: "outbound", subject: "", summary: "" });
     setShowAddComm(false);
     toast.success("沟通记录已添加", {
