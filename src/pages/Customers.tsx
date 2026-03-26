@@ -109,11 +109,70 @@ export default function Customers() {
   const [isImporting, setIsImporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filtered = customers.filter((c) => {
+  const filtered = customerList.filter((c) => {
     const tierMatch = selectedTier === "all" || c.tier === selectedTier;
     const searchMatch = !searchQuery || c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.company.toLowerCase().includes(searchQuery.toLowerCase());
     return tierMatch && searchMatch;
   });
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImportFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const text = evt.target?.result as string;
+      if (!text) return;
+      const lines = text.split("\n").filter((l) => l.trim());
+      if (lines.length < 2) { toast.error("文件格式不正确，至少需要表头行和一行数据"); return; }
+      const headers = lines[0].split(",").map((h) => h.trim().toLowerCase().replace(/"/g, ""));
+      const nameIdx = headers.findIndex((h) => h.includes("name") || h.includes("姓名") || h.includes("客户"));
+      const companyIdx = headers.findIndex((h) => h.includes("company") || h.includes("公司"));
+      const emailIdx = headers.findIndex((h) => h.includes("email") || h.includes("邮箱"));
+      const phoneIdx = headers.findIndex((h) => h.includes("phone") || h.includes("电话"));
+      const countryIdx = headers.findIndex((h) => h.includes("country") || h.includes("国家"));
+      const tierIdx = headers.findIndex((h) => h.includes("tier") || h.includes("等级"));
+      if (nameIdx === -1) { toast.error("未找到\"姓名/Name\"列，请检查CSV表头"); return; }
+      const maxId = Math.max(...customerList.map((c) => c.id), 0);
+      const parsed: Customer[] = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(",").map((c) => c.trim().replace(/"/g, ""));
+        const name = cols[nameIdx];
+        if (!name) continue;
+        const tier = (tierIdx >= 0 ? cols[tierIdx]?.toUpperCase() : "C") as "A" | "B" | "C";
+        parsed.push({
+          id: maxId + i,
+          name,
+          company: companyIdx >= 0 ? cols[companyIdx] || "" : "",
+          email: emailIdx >= 0 ? cols[emailIdx] || "" : "",
+          phone: phoneIdx >= 0 ? cols[phoneIdx] || "" : "",
+          country: countryIdx >= 0 ? cols[countryIdx] || "" : "",
+          tier: ["A", "B", "C"].includes(tier) ? tier : "C",
+          aiScore: 0, totalOrders: 0, totalValue: "$0",
+          lastContact: "刚导入", channels: [], status: "nurturing",
+          tags: ["批量导入"],
+        });
+      }
+      if (parsed.length === 0) { toast.error("未解析到有效客户数据"); return; }
+      setImportPreview(parsed);
+      setShowImport(true);
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const confirmImport = () => {
+    setIsImporting(true);
+    setTimeout(() => {
+      setCustomerList((prev) => [...prev, ...importPreview]);
+      setIsImporting(false);
+      setShowImport(false);
+      setImportPreview([]);
+      toast.success(`成功导入 ${importPreview.length} 位客户`, {
+        description: `已保存到 ~/OPC/customers/ 目录`,
+      });
+    }, 1000);
+  };
 
   const openCustomer = (c: Customer) => {
     setSelectedCustomer(c);
