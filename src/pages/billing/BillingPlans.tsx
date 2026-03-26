@@ -7,8 +7,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Check, X, Crown, Zap, Star,
   Bot, HardDrive, Coins, Headphones, Sparkles,
-  CreditCard, QrCode, Shield, Clock,
+  CreditCard, QrCode, Shield, Clock, Tag, Loader2,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -116,17 +117,53 @@ const featureLabels: Record<string, { label: string; category: string }> = {
 
 const categories = ["核心功能", "数据服务", "高级功能", "服务保障"];
 
+/* ─── Coupon data ─── */
+const validCoupons: Record<string, { label: string; type: "percent" | "fixed"; value: number }> = {
+  "VIP20": { label: "VIP专属优惠", type: "percent", value: 20 },
+  "NEW100": { label: "新用户立减", type: "fixed", value: 100 },
+  "YEAR500": { label: "年付专享", type: "fixed", value: 500 },
+  "SAVE10": { label: "限时折扣", type: "percent", value: 10 },
+};
+
 /* ─── Payment Dialog ─── */
 function PaymentDialog({ plan, yearly, onClose }: { plan: typeof plans[0]; yearly: boolean; onClose: () => void }) {
   const [payMethod, setPayMethod] = useState<"wechat" | "alipay">("wechat");
   const [step, setStep] = useState<"select" | "qr" | "success">("select");
+  const [couponCode, setCouponCode] = useState("");
+  const [couponStatus, setCouponStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; label: string; discount: number } | null>(null);
+
   const price = yearly ? plan.yearlyPrice : plan.monthlyPrice;
-  const totalPrice = yearly ? price * 12 : price;
+  const baseTotal = yearly ? price * 12 : price;
+  const discount = appliedCoupon?.discount ?? 0;
+  const totalPrice = Math.max(0, baseTotal - discount);
   const Icon = plan.icon;
+
+  const handleApplyCoupon = () => {
+    if (!couponCode.trim()) return;
+    setCouponStatus("checking");
+    // Simulate async check
+    setTimeout(() => {
+      const coupon = validCoupons[couponCode.trim().toUpperCase()];
+      if (coupon) {
+        const discountAmount = coupon.type === "percent" ? Math.round(baseTotal * coupon.value / 100) : coupon.value;
+        setAppliedCoupon({ code: couponCode.trim().toUpperCase(), label: coupon.label, discount: discountAmount });
+        setCouponStatus("valid");
+      } else {
+        setAppliedCoupon(null);
+        setCouponStatus("invalid");
+      }
+    }, 800);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponStatus("idle");
+  };
 
   const handlePay = () => {
     setStep("qr");
-    // Simulate payment completion
     setTimeout(() => setStep("success"), 3000);
   };
 
@@ -180,12 +217,61 @@ function PaymentDialog({ plan, yearly, onClose }: { plan: typeof plans[0]; yearl
                     </div>
                   )}
 
+                  {/* Coupon */}
+                  <div>
+                    <div className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1"><Tag className="w-3 h-3" /> 优惠券</div>
+                    {appliedCoupon ? (
+                      <div className="flex items-center justify-between p-2.5 rounded-lg border border-brand-green/30 bg-brand-green/5">
+                        <div className="flex items-center gap-2">
+                          <Tag className="w-3.5 h-3.5 text-brand-green" />
+                          <div>
+                            <div className="text-xs font-medium text-foreground">{appliedCoupon.code}</div>
+                            <div className="text-[10px] text-brand-green">{appliedCoupon.label} · 已优惠 ¥{appliedCoupon.discount.toLocaleString()}</div>
+                          </div>
+                        </div>
+                        <button onClick={handleRemoveCoupon} className="text-muted-foreground hover:text-foreground transition-colors"><X className="w-4 h-4" /></button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="输入优惠码"
+                          value={couponCode}
+                          onChange={e => { setCouponCode(e.target.value); if (couponStatus !== "idle") setCouponStatus("idle"); }}
+                          onKeyDown={e => e.key === "Enter" && handleApplyCoupon()}
+                          className="h-8 text-xs flex-1"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs shrink-0"
+                          onClick={handleApplyCoupon}
+                          disabled={!couponCode.trim() || couponStatus === "checking"}
+                        >
+                          {couponStatus === "checking" ? <Loader2 className="w-3 h-3 animate-spin" /> : "使用"}
+                        </Button>
+                      </div>
+                    )}
+                    {couponStatus === "invalid" && (
+                      <p className="text-[10px] text-destructive mt-1">优惠码无效，请检查后重试</p>
+                    )}
+                    {couponStatus === "idle" && !appliedCoupon && (
+                      <p className="text-[10px] text-muted-foreground mt-1">试试: VIP20, NEW100, YEAR500</p>
+                    )}
+                  </div>
+
+                  {/* Price breakdown */}
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between"><span className="text-muted-foreground">套餐单价</span><span className="text-foreground">¥{price}/月</span></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">购买时长</span><span className="text-foreground">{yearly ? "12 个月" : "1 个月"}</span></div>
+                    {appliedCoupon && (
+                      <div className="flex justify-between"><span className="text-brand-green flex items-center gap-1"><Tag className="w-3 h-3" /> 优惠券减免</span><span className="text-brand-green font-medium">-¥{appliedCoupon.discount.toLocaleString()}</span></div>
+                    )}
                     <div className="border-t border-border pt-1.5 flex justify-between font-medium">
                       <span className="text-foreground">应付金额</span>
-                      <span className="text-primary text-base font-display">¥{totalPrice.toLocaleString()}</span>
+                      <div className="text-right">
+                        {appliedCoupon && <span className="text-xs text-muted-foreground line-through mr-1.5">¥{baseTotal.toLocaleString()}</span>}
+                        <span className="text-primary text-base font-display">¥{totalPrice.toLocaleString()}</span>
+                      </div>
                     </div>
                   </div>
 
