@@ -8,7 +8,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import AIAssistant from "./components/AIAssistant";
 import Dashboard from "./pages/Dashboard";
 import Inbox from "./pages/Inbox";
-import AISales from "./pages/AISales";
+
 import SocialContent from "./pages/SocialContent";
 import AdsCommand from "./pages/AdsCommand";
 import EmailMarketing from "./pages/EmailMarketing";
