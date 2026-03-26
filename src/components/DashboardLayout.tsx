@@ -118,6 +118,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <PointsStatusBar />
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-mono">
               <div className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse-glow" />
               <span>5 Agents Active</span>
