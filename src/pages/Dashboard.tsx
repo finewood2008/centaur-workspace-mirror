@@ -77,7 +77,7 @@ export default function Dashboard() {
         setResponseDialogOpen(true);
         break;
       case "satisfaction":
-        toast({ title: "功能开发中", description: "详细数据面板即将上线" });
+        setSatisfactionDialogOpen(true);
         break;
     }
   }, [navigate]);
