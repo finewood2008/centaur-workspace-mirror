@@ -2,7 +2,7 @@
  * EmailAnalytics - 数据分析
  */
 import { useState } from "react";
-import { TrendingUp, Mail, Eye, MousePointerClick, Reply, Check, X, Lightbulb } from "lucide-react";
+import { TrendingUp, Mail, Eye, MousePointerClick, Reply, Check, X, Lightbulb, FlaskConical, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
