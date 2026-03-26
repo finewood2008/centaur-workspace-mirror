@@ -125,9 +125,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Bell className="w-4 h-4" />
               <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-brand-orange" />
             </button>
-            <button className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
+            <Link to="/settings" className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
               <Settings className="w-4 h-4" />
-            </button>
+            </Link>
           </div>
         </header>
 
