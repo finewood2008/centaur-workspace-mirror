@@ -93,7 +93,7 @@ export default function AIAssistant() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 right-6 w-80 h-[28rem] bg-card border border-border rounded-xl shadow-2xl flex flex-col z-50 overflow-hidden"
+            className="fixed bottom-20 right-6 w-80 h-[28rem] bg-card border border-border rounded-xl shadow-2xl flex flex-col z-50 overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-secondary/50">
