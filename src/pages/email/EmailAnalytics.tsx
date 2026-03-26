@@ -26,6 +26,49 @@ const campaigns = [
   { name: "Monthly Product Newsletter", status: "completed", sent: 850, openRate: 40, clicked: 89, replyRate: 0.6 },
 ];
 
+const abTests = [
+  {
+    id: "1",
+    campaign: "LED Buyers - North America Q1",
+    status: "completed" as const,
+    startDate: "2026-03-15",
+    sampleSize: 450,
+    variants: [
+      { name: "A", subject: "5 Year Warranty LED Bulbs - Factory Direct", sent: 225, opened: 99, openRate: 44.0, clicked: 38, clickRate: 16.9, replied: 14, replyRate: 6.2, isWinner: true },
+      { name: "B", subject: "Save 30% on LED Lighting - Limited Offer", sent: 225, opened: 72, openRate: 32.0, clicked: 25, clickRate: 11.1, replied: 9, replyRate: 4.0, isWinner: false },
+    ],
+    confidence: 95,
+  },
+  {
+    id: "2",
+    campaign: "Solar Panel Follow-up Sequence",
+    status: "running" as const,
+    startDate: "2026-03-22",
+    sampleSize: 120,
+    variants: [
+      { name: "A", subject: "Quick question about your solar needs", sent: 60, opened: 31, openRate: 51.7, clicked: 18, clickRate: 30.0, replied: 9, replyRate: 15.0, isWinner: false },
+      { name: "B", subject: "How {{companyName}} can cut energy costs 40%", sent: 60, opened: 38, openRate: 63.3, clicked: 22, clickRate: 36.7, replied: 11, replyRate: 18.3, isWinner: false },
+    ],
+    confidence: 78,
+  },
+  {
+    id: "3",
+    campaign: "Monthly Product Newsletter",
+    status: "completed" as const,
+    startDate: "2026-03-01",
+    sampleSize: 850,
+    variants: [
+      { name: "A", subject: "March Product Updates & New Arrivals", sent: 425, opened: 153, openRate: 36.0, clicked: 38, clickRate: 8.9, replied: 2, replyRate: 0.5, isWinner: false },
+      { name: "B", subject: "3 New Products You Need to See This Month", sent: 425, opened: 187, openRate: 44.0, clicked: 51, clickRate: 12.0, replied: 3, replyRate: 0.7, isWinner: true },
+    ],
+    confidence: 97,
+  },
+];
+
+const abStatusConfig: Record<string, { label: string; className: string }> = {
+  running: { label: "测试中", className: "bg-primary/15 text-primary" },
+  completed: { label: "已完成", className: "bg-brand-green/15 text-brand-green" },
+};
 const statusConfig: Record<string, { label: string; className: string }> = {
   active: { label: "进行中", className: "bg-brand-green/15 text-brand-green" },
   completed: { label: "已完成", className: "bg-brand-cyan/15 text-brand-cyan" },
