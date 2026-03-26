@@ -123,6 +123,7 @@ export default function Dashboard() {
       <AIStrategyDrawer open={strategyDrawerOpen} onOpenChange={setStrategyDrawerOpen} />
       <ResponseTimeDialog open={responseDialogOpen} onOpenChange={setResponseDialogOpen} />
       <SatisfactionDialog open={satisfactionDialogOpen} onOpenChange={setSatisfactionDialogOpen} />
+      <InquiryDialog open={inquiryDialogOpen} onOpenChange={setInquiryDialogOpen} totalInquiries={stats.inquiries} />
     </motion.div>
   );
 }
