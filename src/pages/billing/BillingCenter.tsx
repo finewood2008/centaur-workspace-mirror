@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Coins, TrendingUp, CreditCard, Settings, ChevronRight,
   Bot, FileText, ArrowUpRight, Download, Gift, Check, Sparkles,
+  Tag, X, Loader2,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
