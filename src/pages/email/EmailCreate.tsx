@@ -111,6 +111,49 @@ export default function EmailCreate() {
     toast.success("垃圾邮件检测完成");
   };
 
+  const [isFixing, setIsFixing] = useState(false);
+
+  const handleAutoFix = async () => {
+    setIsFixing(true);
+    toast.loading("AI正在优化邮件内容...");
+    await new Promise((r) => setTimeout(r, 2000));
+    toast.dismiss();
+
+    // Fix subject: convert full-uppercase words to title case
+    setSubject("5 Year Warranty Led Bulbs - Factory Direct Pricing");
+
+    // Fix body: replace promotional trigger words and add address
+    setBody((prev) =>
+      prev
+        .replace(/save 30-40%/gi, "reduce costs by 30-40%")
+        .replace(/Hi \{\{firstName\}\}/g, "Hello {{firstName}}")
+        .replace(
+          /Best regards,\n\{\{senderName\}\}/g,
+          "Best regards,\n{{senderName}}\nOPC LED Technology Co., Ltd.\n1088 Nanshan Blvd, Shenzhen, China 518000"
+        )
+    );
+
+    // Update spam result to reflect fixes
+    setSpamResult({
+      score: 0.8,
+      checks: [
+        { name: "SPF记录", status: "pass", detail: "opcled.com 已配置SPF记录，授权发送服务器" },
+        { name: "DKIM签名", status: "pass", detail: "DKIM签名有效，密钥长度2048位" },
+        { name: "DMARC策略", status: "pass", detail: "DMARC策略设置为quarantine，对齐SPF/DKIM" },
+        { name: "发件人信誉", status: "pass", detail: "域名信誉良好，近30天退信率<1%" },
+        { name: "内容检测", status: "pass", detail: "未检测到垃圾邮件触发词 ✓ 已优化" },
+        { name: "链接安全", status: "pass", detail: "所有链接均使用HTTPS，无黑名单域名" },
+        { name: "HTML/文本比例", status: "pass", detail: "纯文本邮件，比例良好" },
+        { name: "退订链接", status: "pass", detail: "包含退订链接，符合CAN-SPAM要求" },
+        { name: "主题行检测", status: "pass", detail: "主题行格式规范 ✓ 已优化" },
+      ],
+      suggestions: [],
+    });
+
+    setIsFixing(false);
+    toast.success("已自动修复4项问题，垃圾邮件评分从 2.1 降至 0.8");
+  };
+
 
   const handleGenerate = async () => {
     setIsGenerating(true);
