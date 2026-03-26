@@ -14,6 +14,7 @@ import AIStrategyDrawer from "@/components/dashboard/AIStrategyDrawer";
 import ResponseTimeDialog from "@/components/dashboard/ResponseTimeDialog";
 import SatisfactionDialog from "@/components/dashboard/SatisfactionDialog";
 import InquiryTrendChart from "@/components/dashboard/InquiryTrendChart";
+import InquiryDialog from "@/components/dashboard/InquiryDialog";
 
 const stagger = {
   hidden: { opacity: 0 },
