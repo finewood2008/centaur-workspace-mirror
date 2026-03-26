@@ -77,6 +77,14 @@ export default function ProductDetail({
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Get related products (same category, different id)
+  const relatedProducts = allProducts.filter(
+    (p) => p.category === product.category && p.id !== product.id
+  );
+
+  const isRecommendQuery = (text: string) =>
+    /推荐|同品类|同类|类似|相关|其他产品|还有什么/.test(text);
+
   const sendMessage = useCallback(
     async (text: string) => {
       if (!text.trim() || isStreaming) return;
