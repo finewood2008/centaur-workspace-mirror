@@ -9,7 +9,7 @@ import {
   HardDrive, Download, RefreshCw, FileText, ChevronDown,
   ChevronUp, ChevronRight, Sparkles, AlertTriangle,
   Video, FileJson, Folder, File as FileIcon, ExternalLink,
-  Shield, X,
+  Shield, X, Pencil, Save, Plus, Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface Customer {
@@ -92,6 +93,8 @@ export default function Customers() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [expandedComm, setExpandedComm] = useState<number | null>(null);
   const [showFileTree, setShowFileTree] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ email: "", phone: "", tier: "" as "A" | "B" | "C", tags: [] as string[], newTag: "" });
 
   const filtered = customers.filter((c) => {
     const tierMatch = selectedTier === "all" || c.tier === selectedTier;
@@ -104,6 +107,45 @@ export default function Customers() {
     setDrawerOpen(true);
     setExpandedComm(null);
     setShowFileTree(false);
+    setIsEditing(false);
+  };
+
+  const startEditing = () => {
+    if (!selectedCustomer) return;
+    setEditForm({
+      email: selectedCustomer.email,
+      phone: selectedCustomer.phone,
+      tier: selectedCustomer.tier,
+      tags: [...(selectedCustomer.tags || [])],
+      newTag: "",
+    });
+    setIsEditing(true);
+  };
+
+  const saveEditing = () => {
+    if (!selectedCustomer) return;
+    setSelectedCustomer({
+      ...selectedCustomer,
+      email: editForm.email,
+      phone: editForm.phone,
+      tier: editForm.tier,
+      tags: editForm.tags,
+    });
+    setIsEditing(false);
+    toast.success("客户信息已更新并保存到本地", {
+      description: `已同步到 ~/OPC/customers/${custId}/profile.json`,
+    });
+  };
+
+  const addTag = () => {
+    const tag = editForm.newTag.trim();
+    if (tag && !editForm.tags.includes(tag)) {
+      setEditForm({ ...editForm, tags: [...editForm.tags, tag], newTag: "" });
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setEditForm({ ...editForm, tags: editForm.tags.filter((t) => t !== tag) });
   };
 
   const custId = selectedCustomer ? `CUST-20240315-${String(selectedCustomer.id).padStart(3, "0")}` : "";
@@ -250,27 +292,95 @@ export default function Customers() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className={cn("text-[10px] px-1.5 py-0.5 rounded border font-bold", tierColors[selectedCustomer.tier])}>{selectedCustomer.tier}级</span>
+                    <span className={cn("text-[10px] px-1.5 py-0.5 rounded border font-bold", tierColors[isEditing ? editForm.tier : selectedCustomer.tier])}>{isEditing ? editForm.tier : selectedCustomer.tier}级</span>
                     <Badge variant="outline" className="text-[10px] h-4">AI {selectedCustomer.aiScore}</Badge>
+                    {!isEditing ? (
+                      <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={startEditing}>
+                        <Pencil className="w-3 h-3" />
+                      </Button>
+                    ) : (
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-brand-green" onClick={saveEditing}>
+                          <Save className="w-3 h-3" />
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={() => setIsEditing(false)}>
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </SheetHeader>
 
               <div className="flex-1 overflow-y-auto">
                 {/* Basic Info */}
-                <div className="p-4 border-b border-border space-y-2">
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-muted-foreground"><Mail className="w-3 h-3" /> {selectedCustomer.email}</div>
-                    <div className="flex items-center gap-1.5 text-muted-foreground"><Phone className="w-3 h-3" /> {selectedCustomer.phone}</div>
-                    <div className="flex items-center gap-1.5 text-muted-foreground"><Globe className="w-3 h-3" /> {selectedCustomer.country}</div>
-                    <div className="flex items-center gap-1.5 text-muted-foreground"><DollarSign className="w-3 h-3" /> {selectedCustomer.totalValue} 总价值</div>
-                  </div>
-                  {selectedCustomer.tags && (
-                    <div className="flex gap-1 flex-wrap">
-                      {selectedCustomer.tags.map((tag) => (
-                        <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary rounded">{tag}</span>
-                      ))}
-                    </div>
+                <div className="p-4 border-b border-border space-y-3">
+                  {isEditing ? (
+                    <>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-medium text-muted-foreground">联系方式</label>
+                        <div className="grid grid-cols-1 gap-2">
+                          <div className="flex items-center gap-2">
+                            <Mail className="w-3 h-3 text-muted-foreground shrink-0" />
+                            <Input className="h-7 text-xs" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} placeholder="邮箱地址" />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Phone className="w-3 h-3 text-muted-foreground shrink-0" />
+                            <Input className="h-7 text-xs" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} placeholder="电话号码" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-medium text-muted-foreground">客户等级</label>
+                        <Select value={editForm.tier} onValueChange={(v) => setEditForm({ ...editForm, tier: v as "A" | "B" | "C" })}>
+                          <SelectTrigger className="h-7 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="A">A级 - 核心客户</SelectItem>
+                            <SelectItem value="B">B级 - 重要客户</SelectItem>
+                            <SelectItem value="C">C级 - 普通客户</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-medium text-muted-foreground">标签</label>
+                        <div className="flex gap-1 flex-wrap">
+                          {editForm.tags.map((tag) => (
+                            <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary rounded inline-flex items-center gap-1">
+                              {tag}
+                              <button onClick={() => removeTag(tag)} className="hover:text-destructive"><Trash2 className="w-2.5 h-2.5" /></button>
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex gap-1">
+                          <Input className="h-7 text-xs flex-1" value={editForm.newTag} onChange={(e) => setEditForm({ ...editForm, newTag: e.target.value })} placeholder="添加新标签..." onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())} />
+                          <Button size="sm" variant="outline" className="h-7 text-xs px-2" onClick={addTag}>
+                            <Plus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex items-center gap-1.5 text-muted-foreground"><Globe className="w-3 h-3" /> {selectedCustomer.country}</div>
+                        <div className="flex items-center gap-1.5 text-muted-foreground"><DollarSign className="w-3 h-3" /> {selectedCustomer.totalValue} 总价值</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex items-center gap-1.5 text-muted-foreground"><Mail className="w-3 h-3" /> {selectedCustomer.email}</div>
+                        <div className="flex items-center gap-1.5 text-muted-foreground"><Phone className="w-3 h-3" /> {selectedCustomer.phone}</div>
+                        <div className="flex items-center gap-1.5 text-muted-foreground"><Globe className="w-3 h-3" /> {selectedCustomer.country}</div>
+                        <div className="flex items-center gap-1.5 text-muted-foreground"><DollarSign className="w-3 h-3" /> {selectedCustomer.totalValue} 总价值</div>
+                      </div>
+                      {selectedCustomer.tags && (
+                        <div className="flex gap-1 flex-wrap">
+                          {selectedCustomer.tags.map((tag) => (
+                            <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary rounded">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
 
