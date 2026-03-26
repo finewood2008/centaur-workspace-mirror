@@ -2,7 +2,7 @@
  * 计费设置 - 套餐信息、提醒、上限、Agent控制
  */
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Settings, ArrowLeft, Bell, Bot, Shield, CreditCard, Zap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
