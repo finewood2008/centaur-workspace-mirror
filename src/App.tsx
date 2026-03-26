@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,8 +8,11 @@ import DashboardLayout from "./components/DashboardLayout";
 import AIAssistant from "./components/AIAssistant";
 import Dashboard from "./pages/Dashboard";
 import Inbox from "./pages/Inbox";
-
-import SocialContent from "./pages/SocialContent";
+import SocialLayout from "./components/social/SocialLayout";
+import SocialAccounts from "./pages/social/SocialAccounts";
+import AssetLibrary from "./pages/social/AssetLibrary";
+import ContentCreate from "./pages/social/ContentCreate";
+import ContentCalendar from "./pages/social/ContentCalendar";
 import AdsCommand from "./pages/AdsCommand";
 import EmailMarketing from "./pages/EmailMarketing";
 import Customers from "./pages/Customers";
@@ -29,8 +32,13 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/inbox" element={<Inbox />} />
-              
-              <Route path="/social" element={<SocialContent />} />
+              <Route path="/social" element={<SocialLayout />}>
+                <Route index element={<Navigate to="accounts" replace />} />
+                <Route path="accounts" element={<SocialAccounts />} />
+                <Route path="assets" element={<AssetLibrary />} />
+                <Route path="create" element={<ContentCreate />} />
+                <Route path="calendar" element={<ContentCalendar />} />
+              </Route>
               <Route path="/ads" element={<AdsCommand />} />
               <Route path="/email" element={<EmailMarketing />} />
               <Route path="/customers" element={<Customers />} />
