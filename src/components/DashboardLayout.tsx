@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, Inbox, Bot, Share2, Megaphone, Mail,
+  LayoutDashboard, Inbox, Share2, Megaphone, Mail,
   Users, Package, ChevronLeft, ChevronRight, Bell, Search,
   Settings, Zap, Activity, Cpu, HardDrive,
 } from "lucide-react";
