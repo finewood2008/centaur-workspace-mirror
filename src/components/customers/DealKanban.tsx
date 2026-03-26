@@ -149,7 +149,16 @@ export default function DealKanban({ onDealClick }: { onDealClick?: (deal: Kanba
                     key={deal.id}
                     draggable
                     onDragStart={() => handleDragStart(deal.id)}
-                    className="bg-secondary/40 hover:bg-secondary/70 border border-border rounded-lg p-2.5 cursor-grab active:cursor-grabbing transition-all hover:shadow-sm group"
+                    onClick={() => {
+                      setHighlightedDealId(deal.id);
+                      onDealClick?.(deal);
+                    }}
+                    className={cn(
+                      "border rounded-lg p-2.5 cursor-grab active:cursor-grabbing transition-all hover:shadow-sm group",
+                      highlightedDealId === deal.id
+                        ? "bg-primary/10 border-primary ring-1 ring-primary/30"
+                        : "bg-secondary/40 hover:bg-secondary/70 border-border"
+                    )}
                   >
                     <div className="flex items-start gap-1.5">
                       <GripVertical className="w-3 h-3 text-muted-foreground/40 group-hover:text-muted-foreground mt-0.5 flex-shrink-0" />
