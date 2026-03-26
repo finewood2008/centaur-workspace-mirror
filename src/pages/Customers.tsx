@@ -3,6 +3,7 @@
  */
 import { useState, useRef } from "react";
 import CustomerDistributionMap from "@/components/customers/CustomerDistributionMap";
+import DealKanban from "@/components/customers/DealKanban";
 import {
   Users, Search, Filter, Star, Globe, Mail, Phone,
   Building2, ArrowUpRight, MoreHorizontal, TrendingUp,
@@ -10,7 +11,7 @@ import {
   HardDrive, Download, RefreshCw, FileText, ChevronDown,
   ChevronUp, ChevronRight, Sparkles, AlertTriangle,
   Video, FileJson, Folder, File as FileIcon, ExternalLink,
-  Shield, X, Pencil, Save, Plus, Trash2, Upload, CheckCircle2, AlertCircle,
+  Shield, X, Pencil, Save, Plus, Trash2, Upload, CheckCircle2, AlertCircle, Kanban,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -88,6 +89,7 @@ const commTypeConfig: Record<string, { icon: typeof Mail; label: string; color: 
 };
 
 export default function Customers() {
+  const [activeView, setActiveView] = useState<"list" | "kanban">("list");
   const [selectedTier, setSelectedTier] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -307,6 +309,30 @@ export default function Customers() {
         ))}
       </div>
 
+      {/* View Toggle */}
+      <div className="flex items-center gap-1 border-b border-border">
+        <button
+          onClick={() => setActiveView("list")}
+          className={cn("px-4 py-2 text-xs font-medium border-b-2 transition-colors -mb-px",
+            activeView === "list" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <Users className="w-3.5 h-3.5 inline mr-1.5" /> 客户列表
+        </button>
+        <button
+          onClick={() => setActiveView("kanban")}
+          className={cn("px-4 py-2 text-xs font-medium border-b-2 transition-colors -mb-px",
+            activeView === "kanban" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <Kanban className="w-3.5 h-3.5 inline mr-1.5" /> 商机看板
+        </button>
+      </div>
+
+      {activeView === "kanban" ? (
+        <DealKanban />
+      ) : (
+      <>
       {/* Customer Distribution Map */}
       <CustomerDistributionMap />
 
@@ -380,6 +406,8 @@ export default function Customers() {
           </table>
         </div>
       </div>
+      </>
+      )}
 
       {/* Customer Detail Drawer */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
