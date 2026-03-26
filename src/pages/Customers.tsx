@@ -93,6 +93,8 @@ export default function Customers() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [expandedComm, setExpandedComm] = useState<number | null>(null);
   const [showFileTree, setShowFileTree] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ email: "", phone: "", tier: "" as "A" | "B" | "C", tags: [] as string[], newTag: "" });
 
   const filtered = customers.filter((c) => {
     const tierMatch = selectedTier === "all" || c.tier === selectedTier;
