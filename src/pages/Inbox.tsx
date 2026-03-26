@@ -1,14 +1,15 @@
 /**
  * Inbox - 全渠道询盘中心
- * 左侧消息列表 + 右侧对话详情 + AI回复功能
+ * 左侧消息列表 + 右侧对话详情 + AI回复功能（真实AI）
  */
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   Search, Send, Bot, CheckCheck, Zap, RefreshCw, Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   id: number; name: string; company: string; avatar: string;
@@ -46,75 +47,15 @@ const mockConversations: Record<number, ChatMessage[]> = {
     { id: 2, sender: "ai", time: "09:01", text: "Hello Ahmed! Thank you for following up. I'll check the sample status for you right away.", aiGenerated: true },
     { id: 3, sender: "customer", time: "09:12", text: "Following up on our previous conversation about steel pipes. When can we expect the samples?" },
   ],
-};
-
-const mockAiReplies: Record<number, string> = {
-  1: `Hi John, thank you for your interest in our LED bulbs!
-
-For an order of 5,000 units, our FOB Shenzhen pricing is as follows:
-• 9W LED Bulb (E27): $1.85/unit
-• 12W LED Bulb (E27): $2.15/unit
-• 15W LED Bulb (E27): $2.50/unit
-
-All products come with CE, RoHS, and UL certifications. Lead time is 15-20 days after order confirmation.
-
-Would you like me to prepare a formal quotation with detailed specifications?
-
-Best regards`,
-  2: `Dear Maria, thank you for your interest in our solar panel products!
-
-Here are the specifications for our popular models:
-• 400W Mono PERC: Efficiency 20.5%, 25-year warranty
-• 550W Mono PERC: Efficiency 21.3%, 25-year warranty
-
-MOQ: 100 pieces per model. We can provide OEM labeling.
-
-Shall I send you the full datasheet and pricing?
-
-Best regards`,
-  3: `Dear Ahmed, thank you for your patience regarding the steel pipe samples.
-
-The samples are currently in production and will be ready for shipment within 3 business days. We will send them via DHL Express with tracking information.
-
-Expected delivery: 5-7 business days after shipment.
-
-Please let me know if you need anything else.
-
-Best regards`,
-  4: `Dear Sarah, thank you for submitting your inquiry on our website!
-
-We have a wide range of phone cases available:
-• TPU soft cases: $0.50-1.20/unit
-• PC hard cases: $0.80-1.50/unit
-• Leather cases: $2.00-4.00/unit
-
-MOQ: 500 pieces per design. Custom printing available.
-
-Would you like to see our catalog?
-
-Best regards`,
-  5: `Dear Yuki, thank you for your interest in our tea sets!
-
-For 500 sets with custom packaging:
-• Ceramic tea set (6-piece): $12.50/set
-• Porcelain tea set (8-piece): $18.00/set
-• Custom packaging design: included for orders over 300 sets
-
-Lead time: 25-30 days. We have experience with Japanese market requirements.
-
-Shall I send you sample photos?
-
-Best regards`,
-  6: `Olá Roberto! Obrigado pelo seu interesse em nossos produtos LED!
-
-Temos uma ampla gama de iluminação LED disponível:
-• Lâmpadas LED: $0.80-2.50/unidade
-• Painéis LED: $5.00-15.00/unidade
-• Fitas LED: $1.50-4.00/metro
-
-Podemos fornecer amostras para avaliação. Qual produto específico lhe interessa?
-
-Atenciosamente`,
+  4: [
+    { id: 1, sender: "customer", time: "08:30", text: "I submitted an inquiry on your website for phone cases. Looking forward to your reply." },
+  ],
+  5: [
+    { id: 1, sender: "customer", time: "14:00", text: "Can you offer tea sets with custom packaging? We need 500 sets for the Japanese market." },
+  ],
+  6: [
+    { id: 1, sender: "customer", time: "16:20", text: "Olá! Estou interessado em seus produtos de iluminação LED." },
+  ],
 };
 
 export default function Inbox() {
@@ -123,6 +64,7 @@ export default function Inbox() {
   const [messageInput, setMessageInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiReply, setAiReply] = useState<string | null>(null);
+  const [aiConfidence, setAiConfidence] = useState(0);
   const [conversations, setConversations] = useState<Record<number, ChatMessage[]>>(mockConversations);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -130,14 +72,42 @@ export default function Inbox() {
   const filteredMessages = activeChannel === "全部" ? messages : messages.filter((m) => m.channel === activeChannel);
   const currentChat = selectedId ? (conversations[selectedId] || []) : [];
 
-  const generateAIReply = useCallback((inquiryId: number) => {
+  const generateAIReply = useCallback(async (inquiryId: number) => {
+    const inquiry = messages.find((m) => m.id === inquiryId);
+    if (!inquiry) return;
+
     setIsGenerating(true);
     setAiReply(null);
-    setTimeout(() => {
-      setAiReply(mockAiReplies[inquiryId] || "Thank you for your message. I will get back to you shortly.");
+
+    try {
+      const chatHistory = (conversations[inquiryId] || []).map((m) => ({
+        sender: m.sender,
+        text: m.text,
+      }));
+
+      const { data, error } = await supabase.functions.invoke("generate-reply", {
+        body: {
+          customerName: inquiry.name,
+          company: inquiry.company,
+          channel: inquiry.channel,
+          messages: chatHistory,
+          aiScore: inquiry.aiScore,
+        },
+      });
+
+      if (error) throw error;
+
+      setAiReply(data.reply);
+      setAiConfidence(data.confidence || 90);
+    } catch (err: any) {
+      console.error("AI reply error:", err);
+      const errorMsg = err?.message || "AI生成失败";
+      toast({ title: "AI回复生成失败", description: errorMsg, variant: "destructive" });
+      setAiReply(null);
+    } finally {
       setIsGenerating(false);
-    }, 1500);
-  }, []);
+    }
+  }, [conversations]);
 
   const handleSelectInquiry = useCallback((id: number) => {
     setSelectedId(id);
@@ -282,7 +252,7 @@ export default function Inbox() {
               <div className="border border-primary/20 rounded-lg p-4 bg-primary/5 animate-pulse">
                 <div className="flex items-center gap-2">
                   <Loader2 className="w-4 h-4 text-primary animate-spin" />
-                  <span className="text-xs font-medium text-primary">AI正在生成回复建议...</span>
+                  <span className="text-xs font-medium text-primary">AI正在分析对话并生成回复建议...</span>
                 </div>
                 <div className="mt-2 space-y-2">
                   <div className="h-3 bg-primary/10 rounded w-full" />
@@ -311,8 +281,8 @@ export default function Inbox() {
                 </div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-[10px] text-muted-foreground">置信度</span>
-                  <Progress value={92} className="h-1.5 flex-1" />
-                  <span className="text-[10px] font-medium text-primary">92%</span>
+                  <Progress value={aiConfidence} className="h-1.5 flex-1" />
+                  <span className="text-[10px] font-medium text-primary">{aiConfidence}%</span>
                 </div>
                 <div className="text-[11px] text-muted-foreground whitespace-pre-wrap leading-relaxed">{aiReply}</div>
               </div>
