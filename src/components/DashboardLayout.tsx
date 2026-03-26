@@ -37,6 +37,7 @@ const dataNavItems: NavItem[] = [
   { icon: Database, label: "数据中心", href: "/data", description: "数据安全与管理" },
   { icon: Archive, label: "备份中心", href: "/data/backup", description: "自动备份与恢复" },
   { icon: Download, label: "数据导出", href: "/data/export", description: "多格式数据导出" },
+  { icon: Coins, label: "消费中心", href: "/billing", description: "计费与点数管理" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
