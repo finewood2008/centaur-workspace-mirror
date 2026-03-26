@@ -2,10 +2,10 @@
  * 消费中心主页 - 本月消费概览 + Agent消费明细 + 趋势图 + 消费记录
  */
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Coins, TrendingUp, CreditCard, Settings, ChevronRight,
-  Bot, FileText, ArrowUpRight, Download,
+  Bot, FileText, ArrowUpRight, Download, Gift, Check, Sparkles,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -104,9 +104,107 @@ function AgentDetail({ agent, onClose }: { agent: typeof agentConsumption[0]; on
   );
 }
 
+/* ─── Recharge Dialog ─── */
+const rechargeTiers = [
+  { id: 1, price: 100, points: 1000, bonus: 0 },
+  { id: 2, price: 500, points: 5500, bonus: 500 },
+  { id: 3, price: 1000, points: 12000, bonus: 2000, popular: true },
+  { id: 4, price: 2000, points: 26000, bonus: 6000 },
+  { id: 5, price: 5000, points: 70000, bonus: 20000 },
+];
+
+function RechargeDialog({ onClose }: { onClose: () => void }) {
+  const [selected, setSelected] = useState(3);
+  const tier = rechargeTiers.find(t => t.id === selected)!;
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm" onClick={onClose}>
+      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="w-full max-w-lg bg-card border border-border rounded-xl shadow-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="p-5 pb-3 border-b border-border">
+          <h3 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
+            <CreditCard className="w-5 h-5 text-primary" /> 充值点数
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">选择充值档位，多买多送</p>
+        </div>
+
+        {/* Tiers */}
+        <div className="p-5 space-y-2">
+          {rechargeTiers.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setSelected(t.id)}
+              className={`w-full flex items-center justify-between p-3.5 rounded-lg border transition-all text-left ${
+                selected === t.id
+                  ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                  : "border-border hover:border-muted-foreground/30 hover:bg-secondary/30"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {selected === t.id ? (
+                  <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center"><Check className="w-3 h-3 text-primary-foreground" /></div>
+                ) : (
+                  <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30" />
+                )}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-foreground">¥{t.price.toLocaleString()}</span>
+                    {t.popular && <Badge className="bg-primary/15 text-primary border-0 text-[10px] px-1.5">最受欢迎</Badge>}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
+                    {t.points.toLocaleString()} 点数
+                    {t.bonus > 0 && <span className="text-brand-green ml-1">（含赠送 {t.bonus.toLocaleString()}）</span>}
+                  </div>
+                </div>
+              </div>
+              {t.bonus > 0 && (
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-green/10">
+                  <Gift className="w-3 h-3 text-brand-green" />
+                  <span className="text-[10px] font-medium text-brand-green">送{t.bonus.toLocaleString()}</span>
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Summary */}
+        <div className="mx-5 p-3 rounded-lg bg-secondary/50 space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">支付金额</span>
+            <span className="font-medium text-foreground">¥{tier.price.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">获得点数</span>
+            <span className="font-medium text-foreground">{(tier.points - tier.bonus).toLocaleString()}</span>
+          </div>
+          {tier.bonus > 0 && (
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground flex items-center gap-1"><Sparkles className="w-3 h-3 text-brand-green" /> 赠送点数</span>
+              <span className="font-medium text-brand-green">+{tier.bonus.toLocaleString()}</span>
+            </div>
+          )}
+          <div className="border-t border-border pt-1.5 flex items-center justify-between text-xs">
+            <span className="font-medium text-foreground">总计到账</span>
+            <span className="font-display font-bold text-primary text-sm">{tier.points.toLocaleString()} 点数</span>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="p-5 pt-4 flex gap-2">
+          <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={onClose}>取消</Button>
+          <Button size="sm" className="flex-1 text-xs gap-1" onClick={onClose}>
+            <CreditCard className="w-3.5 h-3.5" /> 立即支付 ¥{tier.price.toLocaleString()}
+          </Button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 /* ─── Main Page ─── */
 export default function BillingCenter() {
   const [selectedAgent, setSelectedAgent] = useState<typeof agentConsumption[0] | null>(null);
+  const [showRecharge, setShowRecharge] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -121,7 +219,7 @@ export default function BillingCenter() {
         <div className="flex gap-2">
           <Link to="/billing/settings"><Button variant="outline" size="sm" className="text-xs gap-1"><Settings className="w-3.5 h-3.5" /> 计费设置</Button></Link>
           <Link to="/billing/invoice"><Button variant="outline" size="sm" className="text-xs gap-1"><FileText className="w-3.5 h-3.5" /> 账单详情</Button></Link>
-          <Button size="sm" className="text-xs gap-1"><CreditCard className="w-3.5 h-3.5" /> 充值点数</Button>
+          <Button size="sm" className="text-xs gap-1" onClick={() => setShowRecharge(true)}><CreditCard className="w-3.5 h-3.5" /> 充值点数</Button>
         </div>
       </div>
 
@@ -292,8 +390,11 @@ export default function BillingCenter() {
         </CardContent>
       </Card>
 
-      {/* Agent detail overlay */}
+      {/* Overlays */}
       {selectedAgent && <AgentDetail agent={selectedAgent} onClose={() => setSelectedAgent(null)} />}
+      <AnimatePresence>
+        {showRecharge && <RechargeDialog onClose={() => setShowRecharge(false)} />}
+      </AnimatePresence>
     </div>
   );
 }
