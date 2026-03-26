@@ -79,7 +79,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className={cn("px-3", collapsed && "px-0")}>
             {!collapsed && <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 mb-1">数据中心</div>}
             {dataNavItems.map((item) => (
-              <NavLink key={item.href} item={item} active={location.pathname === item.href} collapsed={collapsed} />
+              <NavLink key={item.href} item={item} active={location.pathname.startsWith(item.href)} collapsed={collapsed} />
             ))}
           </div>
         </nav>
