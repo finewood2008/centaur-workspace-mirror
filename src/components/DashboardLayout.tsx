@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import AgentStatusPanel from "./AgentStatusPanel";
+import PointsStatusBar from "./PointsStatusBar";
 
 interface NavItem {
   icon: React.ElementType;
