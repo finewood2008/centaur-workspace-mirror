@@ -37,7 +37,11 @@ serve(async (req) => {
 - 语气专业友好，像一个懂行的产品经理
 - 回复简洁精准，不超过150字
 - 如果问题超出你的知识范围，诚实告知并建议联系工厂业务经理
-- 适当给出建议性行动（如"建议申请样品测试"）`;
+- 适当给出建议性行动（如"建议申请样品测试"）
+
+${relatedProducts && relatedProducts.length > 0 ? `同品类可推荐产品：
+${relatedProducts.map((p: any) => `- ${p.name} (${p.sku}), 价格: ${p.price}, MOQ: ${p.moq}, 工厂: ${p.factory}`).join("\n")}
+当用户询问相关产品、推荐、同品类等问题时，自然地介绍这些产品并说明各自优势和区别。` : ""}`;
 
     const conversationMessages = chatMessages.map((m: { role: string; content: string }) => ({
       role: m.role,
