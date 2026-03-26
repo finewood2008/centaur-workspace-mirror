@@ -151,7 +151,9 @@ export default function Products() {
     return (
       <ProductDetail
         product={selectedProduct}
+        allProducts={products}
         onBack={() => setSelectedProduct(null)}
+        onSelectProduct={(p) => setSelectedProduct(p)}
       />
     );
   }

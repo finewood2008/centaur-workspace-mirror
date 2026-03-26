@@ -38,13 +38,14 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  recommendedProducts?: ProductInfo[];
 }
 
 const quickQuestions = [
   "支持定制吗？",
   "最小起订量能谈吗？",
   "交期多久？",
-  "有哪些认证？",
+  "推荐同品类产品",
 ];
 
 export default function ProductDetail({
