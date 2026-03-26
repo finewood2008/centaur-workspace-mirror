@@ -412,44 +412,40 @@ export default function Inbox() {
               return null;
             })}
 
-            {/* AI Generating */}
-            {isGenerating && (
-              <div className="border border-primary/20 rounded-lg p-4 bg-primary/5 animate-pulse">
-                <div className="flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 text-primary animate-spin" />
-                  <span className="text-xs font-medium text-primary">AI正在分析{isEmail ? "邮件" : "询盘"}并生成回复建议...</span>
-                </div>
-                <div className="mt-2 space-y-2">
-                  <div className="h-3 bg-primary/10 rounded w-full" />
-                  <div className="h-3 bg-primary/10 rounded w-4/5" />
-                  <div className="h-3 bg-primary/10 rounded w-3/5" />
-                </div>
-              </div>
-            )}
-
-            {/* AI Reply */}
-            {!isGenerating && aiReply && (
+            {/* AI Reply - streaming or complete */}
+            {(isGenerating || (aiReply !== null && aiReply !== "")) && (
               <div className="border border-primary/20 rounded-lg p-3 bg-primary/5">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-1.5">
-                    <Zap className="w-3 h-3 text-primary" />
-                    <span className="text-[10px] font-medium text-primary">AI建议回复</span>
+                    {isGenerating ? (
+                      <Loader2 className="w-3 h-3 text-primary animate-spin" />
+                    ) : (
+                      <Zap className="w-3 h-3 text-primary" />
+                    )}
+                    <span className="text-[10px] font-medium text-primary">
+                      {isGenerating ? "AI正在生成回复..." : "AI建议回复"}
+                    </span>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => generateAIReply(selectedId!)}
-                      className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1">
-                      <RefreshCw className="w-3 h-3" /> 重新生成
-                    </button>
-                    <button onClick={handleAdoptReply}
-                      className="text-[10px] bg-primary text-primary-foreground px-2 py-1 rounded hover:opacity-90 font-medium">采用此回复</button>
-                  </div>
+                  {!isGenerating && (
+                    <div className="flex gap-2">
+                      <button onClick={() => generateAIReply(selectedId!)}
+                        className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1">
+                        <RefreshCw className="w-3 h-3" /> 重新生成
+                      </button>
+                      <button onClick={handleAdoptReply}
+                        className="text-[10px] bg-primary text-primary-foreground px-2 py-1 rounded hover:opacity-90 font-medium">采用此回复</button>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-[10px] text-muted-foreground">置信度</span>
-                  <Progress value={aiConfidence} className="h-1.5 flex-1" />
-                  <span className="text-[10px] font-medium text-primary">{aiConfidence}%</span>
+                  <Progress value={isGenerating ? 0 : aiConfidence} className="h-1.5 flex-1" />
+                  <span className="text-[10px] font-medium text-primary">{isGenerating ? "—" : `${aiConfidence}%`}</span>
                 </div>
-                <div className="text-[11px] text-muted-foreground whitespace-pre-wrap leading-relaxed">{aiReply}</div>
+                <div className="text-[11px] text-muted-foreground whitespace-pre-wrap leading-relaxed min-h-[2rem]">
+                  {aiReply || ""}
+                  {isGenerating && <span className="inline-block w-1.5 h-3.5 bg-primary/60 animate-pulse ml-0.5 align-text-bottom rounded-sm" />}
+                </div>
               </div>
             )}
           </div>
