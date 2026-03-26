@@ -89,21 +89,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </nav>
 
-        {/* System status */}
-        {!collapsed && (
-          <div className="p-3 border-t border-sidebar-border">
-            <div className="bg-sidebar-accent rounded-md p-2.5">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Activity className="w-3 h-3 text-brand-green" />
-                <span className="text-[10px] font-medium text-foreground">系统状态</span>
-              </div>
-              <div className="space-y-1">
-                <StatusRow icon={Cpu} label="AI Agent" value="运行中" ok />
-                <StatusRow icon={HardDrive} label="系统负载" value="23%" ok />
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Agent status panel */}
+        <AgentStatusPanel collapsed={collapsed} />
 
         {/* Collapse toggle */}
         <button
