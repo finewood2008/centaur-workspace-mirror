@@ -8,6 +8,7 @@ import {
   Globe, Mail, Instagram, Facebook, Twitter, Reply, Forward,
   Paperclip, Clock, User,
 } from "lucide-react";
+import EmailRichEditor, { type EmailRichEditorRef } from "@/components/EmailRichEditor";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
