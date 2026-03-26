@@ -101,6 +101,11 @@ export default function Dashboard() {
         <StatsCards stats={stats} onCardClick={handleCardClick} />
       </motion.div>
 
+      {/* Trend Chart */}
+      <motion.div variants={fadeUp}>
+        <InquiryTrendChart />
+      </motion.div>
+
       {/* Charts Row */}
       <motion.div variants={fadeUp} className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <SourceChart selectedSource={selectedSource} onSourceClick={setSelectedSource} />
