@@ -50,10 +50,11 @@ const initialDeals: KanbanDeal[] = [
   { id: "d10", name: "停产型号尾货", value: "$3,200", probability: 0, stage: "已关闭", customer: "Roberto Silva", company: "Brazil Imports", tier: "C" },
 ];
 
-export default function DealKanban() {
+export default function DealKanban({ onDealClick }: { onDealClick?: (deal: KanbanDeal) => void }) {
   const [deals, setDeals] = useState<KanbanDeal[]>(initialDeals);
   const dragItem = useRef<string | null>(null);
   const [dragOverStage, setDragOverStage] = useState<string | null>(null);
+  const [highlightedDealId, setHighlightedDealId] = useState<string | null>(null);
 
   const handleDragStart = useCallback((dealId: string) => {
     dragItem.current = dealId;
