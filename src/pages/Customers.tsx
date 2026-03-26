@@ -739,5 +739,72 @@ export default function Customers() {
         </SheetContent>
       </Sheet>
     </div>
+
+      {/* Import Preview Dialog */}
+      {showImport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold flex items-center gap-2">
+                  <Upload className="w-4 h-4 text-primary" /> 批量导入客户
+                </h3>
+                <p className="text-[10px] text-muted-foreground mt-0.5">来源: {importFileName} · 解析到 {importPreview.length} 条记录</p>
+              </div>
+              <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => { setShowImport(false); setImportPreview([]); }}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-3">
+              <div className="rounded-lg border border-border overflow-hidden">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-secondary/30 text-muted-foreground">
+                      <th className="text-left px-3 py-2 font-medium">#</th>
+                      <th className="text-left px-3 py-2 font-medium">姓名</th>
+                      <th className="text-left px-3 py-2 font-medium">公司</th>
+                      <th className="text-left px-3 py-2 font-medium">邮箱</th>
+                      <th className="text-left px-3 py-2 font-medium">国家</th>
+                      <th className="text-left px-3 py-2 font-medium">等级</th>
+                      <th className="text-left px-3 py-2 font-medium">状态</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {importPreview.slice(0, 50).map((c, i) => (
+                      <tr key={i} className="hover:bg-secondary/20">
+                        <td className="px-3 py-1.5 text-muted-foreground">{i + 1}</td>
+                        <td className="px-3 py-1.5 font-medium">{c.name || <span className="text-destructive">缺失</span>}</td>
+                        <td className="px-3 py-1.5 text-muted-foreground">{c.company || "-"}</td>
+                        <td className="px-3 py-1.5 text-muted-foreground">{c.email || "-"}</td>
+                        <td className="px-3 py-1.5 text-muted-foreground">{c.country || "-"}</td>
+                        <td className="px-3 py-1.5">
+                          <span className={cn("text-[10px] px-1.5 py-0.5 rounded border font-bold", tierColors[c.tier])}>{c.tier}</span>
+                        </td>
+                        <td className="px-3 py-1.5">
+                          {c.name ? <CheckCircle2 className="w-3 h-3 text-brand-green" /> : <AlertCircle className="w-3 h-3 text-destructive" />}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {importPreview.length > 50 && (
+                <p className="text-[10px] text-muted-foreground text-center mt-2">仅显示前 50 条，共 {importPreview.length} 条</p>
+              )}
+            </div>
+            <div className="px-5 py-3 border-t border-border flex items-center justify-between">
+              <div className="text-[10px] text-muted-foreground">
+                导入后将保存到 ~/OPC/customers/ 目录
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => { setShowImport(false); setImportPreview([]); }}>取消</Button>
+                <Button size="sm" onClick={confirmImport} disabled={isImporting}>
+                  {isImporting ? "导入中..." : `确认导入 ${importPreview.length} 位客户`}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
   );
 }
