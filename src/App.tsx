@@ -64,7 +64,11 @@ const App = () => (
                 <Route path="analytics" element={<EmailAnalytics />} />
               </Route>
               <Route path="/customers" element={<Customers />} />
+              <Route path="/customers" element={<Customers />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/data" element={<DataCenter />} />
+              <Route path="/data/backup" element={<DataBackup />} />
+              <Route path="/data/export" element={<DataExport />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </DashboardLayout>
