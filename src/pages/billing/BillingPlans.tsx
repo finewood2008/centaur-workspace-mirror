@@ -386,7 +386,7 @@ export default function BillingPlans() {
                       size="sm"
                       className={cn("w-full text-xs", plan.popular && "bg-primary hover:bg-primary/90")}
                       variant={plan.popular ? "default" : "outline"}
-                      onClick={() => toast.success(`已申请升级至${plan.name}，客服将尽快联系您`)}
+                      onClick={() => setPayingPlan(plan)}
                     >
                       {plan.monthlyPrice > 1299 ? "升级套餐" : "切换套餐"}
                     </Button>
