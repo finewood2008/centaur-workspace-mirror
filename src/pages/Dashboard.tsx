@@ -120,6 +120,7 @@ export default function Dashboard() {
       </motion.div>
       <AIStrategyDrawer open={strategyDrawerOpen} onOpenChange={setStrategyDrawerOpen} />
       <ResponseTimeDialog open={responseDialogOpen} onOpenChange={setResponseDialogOpen} />
+      <SatisfactionDialog open={satisfactionDialogOpen} onOpenChange={setSatisfactionDialogOpen} />
     </motion.div>
   );
 }
