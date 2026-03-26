@@ -8,6 +8,7 @@ import {
   Globe, Mail, Instagram, Facebook, Twitter, Reply, Forward,
   Paperclip, Clock, User,
 } from "lucide-react";
+import EmailRichEditor, { type EmailRichEditorRef } from "@/components/EmailRichEditor";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
@@ -82,10 +83,14 @@ export default function Inbox() {
   const [aiConfidence, setAiConfidence] = useState(0);
   const [conversations, setConversations] = useState<Record<number, ChatMessage[]>>(mockConversations);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const emailEditorRef = useRef<EmailRichEditorRef>(null);
 
   const selectedInquiry = inquiries.find((m) => m.id === selectedId);
   const filteredInquiries = activeChannel === "全部" ? inquiries : inquiries.filter((m) => m.channel === activeChannel);
   const currentChat = selectedId ? (conversations[selectedId] || []) : [];
+  const isEmail = selectedInquiry?.channel === "Email";
+  const isSocial = selectedInquiry?.channel === "Instagram" || selectedInquiry?.channel === "Facebook" || selectedInquiry?.channel === "Twitter";
+  const isWebsite = selectedInquiry?.channel === "独立站";
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -183,25 +188,47 @@ export default function Inbox() {
   }, [generateAIReply]);
 
   const handleAdoptReply = useCallback(() => {
-    if (aiReply) { setMessageInput(aiReply); setAiReply(null); setTimeout(() => textareaRef.current?.focus(), 50); }
-  }, [aiReply]);
+    if (!aiReply) return;
+    if (isEmail && emailEditorRef.current) {
+      emailEditorRef.current.setContent(aiReply.replace(/\n/g, "<br>"));
+      setAiReply(null);
+      setTimeout(() => emailEditorRef.current?.focus(), 50);
+    } else {
+      setMessageInput(aiReply);
+      setAiReply(null);
+      setTimeout(() => textareaRef.current?.focus(), 50);
+    }
+  }, [aiReply, isEmail]);
 
   const handleSend = useCallback(() => {
-    if (!messageInput.trim() || !selectedId) return;
     const now = new Date();
     const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
-    setConversations((prev) => ({
-      ...prev,
-      [selectedId]: [...(prev[selectedId] || []), { id: Date.now(), sender: "user", time: timeStr, text: messageInput.trim() }],
-    }));
-    setMessageInput("");
-    toast({ title: "发送成功", description: selectedInquiry?.channel === "Email" ? "邮件已发送" : "消息已发送" });
-  }, [messageInput, selectedId, selectedInquiry]);
+
+    if (isEmail && emailEditorRef.current) {
+      const text = emailEditorRef.current.getText().trim();
+      if (!text || !selectedId) return;
+      const attachments = emailEditorRef.current.getAttachments();
+      setConversations((prev) => ({
+        ...prev,
+        [selectedId]: [...(prev[selectedId] || []), { id: Date.now(), sender: "user", time: timeStr, text }],
+      }));
+      emailEditorRef.current.clear();
+      toast({
+        title: "邮件已发送",
+        description: attachments.length > 0 ? `包含 ${attachments.length} 个附件` : "邮件回复已发送",
+      });
+    } else {
+      if (!messageInput.trim() || !selectedId) return;
+      setConversations((prev) => ({
+        ...prev,
+        [selectedId]: [...(prev[selectedId] || []), { id: Date.now(), sender: "user", time: timeStr, text: messageInput.trim() }],
+      }));
+      setMessageInput("");
+      toast({ title: "发送成功", description: "消息已发送" });
+    }
+  }, [messageInput, selectedId, isEmail]);
 
   const chCfg = selectedInquiry ? channelConfig[selectedInquiry.channel] : null;
-  const isEmail = selectedInquiry?.channel === "Email";
-  const isSocial = selectedInquiry?.channel === "Instagram" || selectedInquiry?.channel === "Facebook" || selectedInquiry?.channel === "Twitter";
-  const isWebsite = selectedInquiry?.channel === "独立站";
 
   return (
     <div className="flex h-[calc(100vh-7rem)] gap-0 -m-4 lg:-m-6">
@@ -452,27 +479,37 @@ export default function Inbox() {
 
           {/* Compose area */}
           <div className="p-4 border-t border-border">
-            {isEmail && (
-              <div className="flex items-center gap-3 mb-2 text-[10px] text-muted-foreground">
-                <span>收件人: {selectedInquiry.email}</span>
-                <button className="flex items-center gap-1 hover:text-foreground"><Paperclip className="w-3 h-3" /> 附件</button>
+            {isEmail ? (
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <EmailRichEditor
+                    ref={emailEditorRef}
+                    recipientEmail={selectedInquiry.email}
+                    placeholder="撰写邮件回复..."
+                  />
+                </div>
+                <button onClick={handleSend}
+                  className="self-end w-9 h-9 bg-primary text-primary-foreground rounded-lg flex items-center justify-center hover:opacity-90 shrink-0">
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <textarea
+                  ref={textareaRef}
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+                  placeholder={isSocial ? "回复私信..." : "输入回复内容..."}
+                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-xs outline-none placeholder:text-muted-foreground resize-none min-h-[60px]"
+                  rows={2}
+                />
+                <button onClick={handleSend} disabled={!messageInput.trim()}
+                  className="self-end w-9 h-9 bg-primary text-primary-foreground rounded-lg flex items-center justify-center hover:opacity-90 shrink-0 disabled:opacity-50">
+                  <Send className="w-4 h-4" />
+                </button>
               </div>
             )}
-            <div className="flex gap-2">
-              <textarea
-                ref={textareaRef}
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                placeholder={isEmail ? "撰写邮件回复..." : isSocial ? "回复私信..." : "输入回复内容..."}
-                className="flex-1 bg-secondary rounded-lg px-3 py-2 text-xs outline-none placeholder:text-muted-foreground resize-none min-h-[60px]"
-                rows={isEmail ? 4 : 2}
-              />
-              <button onClick={handleSend} disabled={!messageInput.trim()}
-                className="self-end w-9 h-9 bg-primary text-primary-foreground rounded-lg flex items-center justify-center hover:opacity-90 shrink-0 disabled:opacity-50">
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
           </div>
         </div>
       ) : (
