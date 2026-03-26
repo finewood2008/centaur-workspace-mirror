@@ -281,7 +281,6 @@ Best regards,
             </div>
           </div>
         </div>
-
           {/* Spam Score Panel */}
           {spamChecked && spamResult && (
             <div className="bg-card border border-border rounded-xl p-4 space-y-3">
