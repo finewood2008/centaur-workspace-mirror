@@ -301,9 +301,9 @@ export default function Customers() {
           { label: "客户总价值", value: "$1.2M", sub: "↑ 15% vs 上月" },
           { label: "平均AI评分", value: "67", sub: "/ 100" },
         ].map((s) => (
-          <div key={s.label} className="bg-card border border-border rounded-xl p-4">
+          <div key={s.label} className="glass-panel metric-card rounded-xl p-4">
             <div className="text-xs text-muted-foreground mb-1">{s.label}</div>
-            <div className="text-xl font-display font-bold">{s.value}</div>
+            <div className="text-xl font-metric font-bold">{s.value}</div>
             <div className="text-[10px] text-muted-foreground mt-1">{s.sub}</div>
           </div>
         ))}
