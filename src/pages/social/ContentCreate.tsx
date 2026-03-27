@@ -142,7 +142,7 @@ export default function ContentCreate() {
 
       {/* Step 2: AI caption */}
       {step === 2 && (
-        <div className="bg-card border border-border rounded-xl p-4 space-y-4">
+        <div className="glass-panel rounded-xl p-4 space-y-4">
           <div>
             <h3 className="text-sm font-semibold mb-3">内容主题</h3>
             <div className="flex flex-wrap gap-2">
