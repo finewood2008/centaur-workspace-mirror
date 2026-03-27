@@ -42,13 +42,13 @@ const emailSequence = [
 export default function EmailMarketing() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 className="font-display font-semibold text-lg">AI EDM邮件营销</h2>
           <p className="text-xs text-muted-foreground">AI Email Marketing · 智能开发信与自动化跟进序列</p>
         </div>
         <button onClick={() => toast("AI邮件生成功能即将上线", { description: "Feature coming soon" })}
-          className="flex items-center gap-1.5 text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md hover:opacity-90 transition-opacity">
+          className="flex items-center gap-1.5 text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md hover:opacity-90 transition-opacity self-start">
           <Sparkles className="w-4 h-4" /> AI生成开发信
         </button>
       </div>
