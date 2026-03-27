@@ -88,9 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Mobile top bar */}
         <header className="h-12 border-b border-border/50 flex items-center justify-between px-3 shrink-0 glass-panel">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary/90 flex items-center justify-center glow-orange">
-              <Zap className="w-3.5 h-3.5 text-primary-foreground" />
-            </div>
+            <img src={logoImg} alt="半人马AI" className="w-7 h-7 object-contain" />
             <span className="font-display font-semibold text-sm text-foreground">半人马AI（DEMO）</span>
           </div>
           <div className="flex items-center gap-1">
