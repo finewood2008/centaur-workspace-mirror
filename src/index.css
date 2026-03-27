@@ -139,3 +139,8 @@
 .tiptap a { color: hsl(var(--primary)); text-decoration: underline; }
 .tiptap mark { background-color: hsl(var(--primary) / 0.25); border-radius: 2px; padding: 0 2px; }
 .tiptap blockquote { border-left: 3px solid hsl(var(--border)); padding-left: 0.8em; color: hsl(var(--muted-foreground)); }
+
+/* Safe area for mobile bottom nav */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
