@@ -81,139 +81,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
               <Zap className="w-3.5 h-3.5 text-primary-foreground" />
             </div>
-            <span className="font-display font-semibold text-sm text-foreground">半人马AI</span>
+            <span className="font-display font-semibold text-sm text-foreground">半人马AI（DEMO）</span>
           </div>
-          <div className="flex items-center gap-1">
-            <PointsStatusBar />
-            <button className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground relative">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-brand-orange" />
-            </button>
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <button className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground">
-                  <Menu className="w-4 h-4" />
-                </button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] p-0">
-                <SheetTitle className="sr-only">导航菜单</SheetTitle>
+...
                 <div className="p-4 border-b border-border">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                       <Zap className="w-4 h-4 text-primary-foreground" />
                     </div>
                     <div>
-                      <div className="font-display font-semibold text-sm">半人马AI</div>
+                      <div className="font-display font-semibold text-sm">半人马AI（DEMO）</div>
                       <div className="text-[10px] text-muted-foreground">外贸OPC超级工作台</div>
                     </div>
                   </div>
                 </div>
-                <nav className="p-3 space-y-1">
-                  <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 mb-1">核心模块</div>
-                  {mainNavItems.map((item) => {
-                    const Icon = item.icon;
-                    const active = item.href === "/" ? location.pathname === "/" : location.pathname.startsWith(item.href);
-                    return (
-                      <Link
-                        key={item.href}
-                        to={item.href}
-                        className={cn(
-                          "flex items-center gap-3 px-2 py-2.5 rounded-md text-sm transition-colors",
-                          active ? "bg-sidebar-accent text-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        )}
-                      >
-                        <Icon className={cn("w-4 h-4", active && "text-primary")} />
-                        <span className="text-xs font-medium">{item.label}</span>
-                        {item.badge && (
-                          <span className="ml-auto text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded font-medium">{item.badge}</span>
-                        )}
-                      </Link>
-                    );
-                  })}
-                  <div className="my-2 border-t border-border" />
-                  <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 mb-1">数据中心</div>
-                  {dataNavItems.map((item) => {
-                    const Icon = item.icon;
-                    const active = item.href === "/data" ? location.pathname === "/data" : location.pathname.startsWith(item.href);
-                    return (
-                      <Link
-                        key={item.href}
-                        to={item.href}
-                        className={cn(
-                          "flex items-center gap-3 px-2 py-2.5 rounded-md text-sm transition-colors",
-                          active ? "bg-sidebar-accent text-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        )}
-                      >
-                        <Icon className={cn("w-4 h-4", active && "text-primary")} />
-                        <span className="text-xs font-medium">{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                  <div className="my-2 border-t border-border" />
-                  <Link
-                    to="/settings"
-                    className="flex items-center gap-3 px-2 py-2.5 rounded-md text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-                  >
-                    <Settings className="w-4 h-4" />
-                    <span className="text-xs font-medium">设置</span>
-                  </Link>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-3 pb-20">
-          {children}
-        </main>
-
-        {/* Bottom tab bar */}
-        <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t border-border flex items-center justify-around px-1 z-40 safe-area-pb">
-          {mobileTabItems.map((item) => {
-            const Icon = item.icon;
-            const active = item.href === "/" ? location.pathname === "/" : location.pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  "flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg transition-colors relative min-w-[48px]",
-                  active ? "text-primary" : "text-muted-foreground"
-                )}
-              >
-                <Icon className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{item.label}</span>
-                {item.badge && (
-                  <span className="absolute -top-0.5 right-0 w-4 h-4 bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center">
-                    {item.badge > 9 ? "9+" : item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-          {/* More button to open sheet */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="flex flex-col items-center gap-0.5 py-1 px-2 rounded-lg text-muted-foreground min-w-[48px]"
-          >
-            <Menu className="w-5 h-5" />
-            <span className="text-[10px] font-medium">更多</span>
-          </button>
-        </nav>
-      </div>
-    );
-  }
-
-  // Desktop layout
-  return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
-      <motion.aside
-        animate={{ width: collapsed ? 60 : 200 }}
-        transition={{ duration: 0.2, ease: [0, 0, 0.2, 1] }}
-        className="flex flex-col border-r border-sidebar-border bg-sidebar shrink-0 overflow-hidden"
-      >
+...
         {/* Brand */}
         <div className="flex items-center gap-2 px-3 h-14 border-b border-sidebar-border shrink-0">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0">
@@ -221,7 +103,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
           {!collapsed && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="overflow-hidden">
-              <div className="font-display font-semibold text-sm text-foreground whitespace-nowrap">半人马AI</div>
+              <div className="font-display font-semibold text-sm text-foreground whitespace-nowrap">半人马AI（DEMO）</div>
               <div className="text-[10px] text-muted-foreground whitespace-nowrap">外贸OPC超级工作台</div>
             </motion.div>
           )}
