@@ -257,12 +257,12 @@ export default function Products() {
               { label: "总浏览量", value: "11.7K", sub: "↑ 28% 本月", icon: Eye },
               { label: "询盘转化", value: "225", sub: "转化率 1.9%", icon: Tag },
             ].map((s) => (
-              <div key={s.label} className="bg-card border border-border rounded-xl p-4">
+          <div key={s.label} className="glass-panel metric-card rounded-xl p-4">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs text-muted-foreground">{s.label}</span>
                   <s.icon className="w-3.5 h-3.5 text-muted-foreground" />
                 </div>
-                <div className="text-xl font-display font-bold">{s.value}</div>
+                <div className="text-xl font-metric font-bold">{s.value}</div>
                 <div className="text-[10px] text-muted-foreground mt-1">{s.sub}</div>
               </div>
             ))}
