@@ -302,20 +302,25 @@ export default function Inbox() {
 
       {/* Right: Detail */}
       {selectedInquiry && chCfg ? (
-        <div className="flex-1 flex flex-col">
+        <div className={cn("flex-1 flex flex-col", isMobile && !selectedId && "hidden")}>
           {/* Header */}
-          <div className="p-4 border-b border-border flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-sm font-semibold text-primary">{selectedInquiry.avatar}</div>
-              <div>
-                <div className="text-sm font-medium">{selectedInquiry.name} · <span className="text-muted-foreground">{selectedInquiry.company}</span></div>
+          <div className="p-3 md:p-4 border-b border-border flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 md:gap-3 min-w-0">
+              {isMobile && (
+                <button onClick={() => setSelectedId(null)} className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground shrink-0">
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+              )}
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-primary/15 flex items-center justify-center text-xs md:text-sm font-semibold text-primary shrink-0">{selectedInquiry.avatar}</div>
+              <div className="min-w-0">
+                <div className="text-xs md:text-sm font-medium truncate">{selectedInquiry.name} · <span className="text-muted-foreground">{selectedInquiry.company}</span></div>
                 <div className={cn("text-[10px] flex items-center gap-1", chCfg.color)}>
-                  {chCfg.icon} {chCfg.label} · 最后活跃: {selectedInquiry.time}
+                  {chCfg.icon} {chCfg.label} · {selectedInquiry.time}
                 </div>
               </div>
             </div>
-            <button className="text-xs bg-secondary text-foreground px-3 py-1.5 rounded-md hover:bg-secondary/80 transition-colors flex items-center gap-1.5">
-              <Bot className="w-3 h-3" /> AI分析
+            <button className="text-xs bg-secondary text-foreground px-2 md:px-3 py-1.5 rounded-md hover:bg-secondary/80 transition-colors flex items-center gap-1 shrink-0">
+              <Bot className="w-3 h-3" /> <span className="hidden sm:inline">AI分析</span>
             </button>
           </div>
 
