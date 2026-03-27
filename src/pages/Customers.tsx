@@ -256,20 +256,20 @@ export default function Customers() {
   return (
     <>
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 className="font-display font-semibold text-lg">客户管理</h2>
           <p className="text-xs text-muted-foreground">Customer Agent · 360度客户画像与智能分级</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <input type="file" ref={fileInputRef} accept=".csv,.xlsx,.xls" className="hidden" onChange={handleFileSelect} />
           <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()}>
-            <Upload className="w-3.5 h-3.5 mr-1" /> 批量导入
+            <Upload className="w-3.5 h-3.5 mr-1" /> <span className="hidden sm:inline">批量</span>导入
           </Button>
           <Button size="sm" variant="outline" onClick={() => toast.success("客户数据已导出到 ~/OPC/exports/customers-2026-03-27.xlsx")}>
-            <Download className="w-3.5 h-3.5 mr-1" /> 导出数据
+            <Download className="w-3.5 h-3.5 mr-1" /> 导出
           </Button>
-          <Button size="sm" variant="outline" onClick={() => toast.success("备份已创建: ~/OPC/backups/customers-20260327.zip")}>
+          <Button size="sm" variant="outline" className="hidden sm:flex" onClick={() => toast.success("备份已创建: ~/OPC/backups/customers-20260327.zip")}>
             <HardDrive className="w-3.5 h-3.5 mr-1" /> 备份
           </Button>
         </div>

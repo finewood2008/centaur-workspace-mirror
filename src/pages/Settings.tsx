@@ -43,29 +43,31 @@ export default function Settings() {
         <p className="text-xs text-muted-foreground">管理您的账户、系统和 AI Agent 配置</p>
       </div>
 
-      <div className="flex gap-4">
-        {/* Left nav */}
-        <div className="w-48 shrink-0 space-y-0.5">
-          {sections.map((s) => (
-            <button
-              key={s.key}
-              onClick={() => setActive(s.key)}
-              className={cn(
-                "w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs transition-colors text-left",
-                active === s.key
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-              )}
-            >
-              <s.icon className="w-3.5 h-3.5" />
-              {s.label}
+      <div className="flex flex-col md:flex-row gap-4">
+        {/* Left nav - horizontal scroll on mobile, vertical on desktop */}
+        <div className="md:w-48 shrink-0">
+          <div className="flex md:flex-col gap-1 overflow-x-auto pb-2 md:pb-0 md:space-y-0.5">
+            {sections.map((s) => (
+              <button
+                key={s.key}
+                onClick={() => setActive(s.key)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-md text-xs transition-colors text-left whitespace-nowrap shrink-0",
+                  active === s.key
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                )}
+              >
+                <s.icon className="w-3.5 h-3.5" />
+                {s.label}
+              </button>
+            ))}
+            <div className="hidden md:block my-2 border-t border-border" />
+            <button className="flex items-center gap-2 px-3 py-2 rounded-md text-xs text-destructive hover:bg-destructive/10 transition-colors text-left whitespace-nowrap shrink-0">
+              <LogOut className="w-3.5 h-3.5" />
+              退出登录
             </button>
-          ))}
-          <div className="my-2 border-t border-border" />
-          <button className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs text-destructive hover:bg-destructive/10 transition-colors text-left">
-            <LogOut className="w-3.5 h-3.5" />
-            退出登录
-          </button>
+          </div>
         </div>
 
         {/* Content */}
