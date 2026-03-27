@@ -208,9 +208,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
       <motion.aside
+        ref={sidebarRef}
+        onMouseMove={handleSidebarMouseMove}
+        onMouseLeave={handleSidebarMouseLeave}
         animate={{ width: collapsed ? 60 : 210 }}
         transition={{ duration: 0.2, ease: [0, 0, 0.2, 1] }}
-        className="flex flex-col border-r border-white/[0.06] bg-sidebar shrink-0 overflow-hidden"
+        className="sidebar-glow-track flex flex-col border-r border-white/[0.06] bg-sidebar shrink-0 overflow-hidden relative"
+        style={{
+          '--glow-x': `${sidebarGlow.x}px`,
+          '--glow-y': `${sidebarGlow.y}px`,
+          '--glow-opacity': sidebarGlow.visible ? '1' : '0',
+        } as React.CSSProperties}
       >
         {/* Brand with glow */}
         <div className="relative flex items-center gap-2 px-3 h-14 border-b border-white/[0.06] shrink-0">
