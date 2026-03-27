@@ -98,7 +98,7 @@ export default function ContentCreate() {
 
       {/* Step 1: Select media */}
       {step === 1 && (
-        <div className="bg-card border border-border rounded-xl p-4 space-y-4">
+        <div className="glass-panel rounded-xl p-4 space-y-4">
           <div>
             <h3 className="text-sm font-semibold mb-1">从素材库选择图片/视频</h3>
             <p className="text-[11px] text-muted-foreground">最多选择9张，已选 {selectedImages.length}/9</p>
