@@ -233,9 +233,12 @@ export default function Inbox() {
   const chCfg = selectedInquiry ? channelConfig[selectedInquiry.channel] : null;
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] gap-0 -m-4 lg:-m-6">
+    <div className="flex h-[calc(100vh-7rem)] gap-0 -m-3 md:-m-4 lg:-m-6">
       {/* Left: Inquiry list */}
-      <div className="w-80 lg:w-96 border-r border-border flex flex-col shrink-0">
+      <div className={cn(
+        "border-r border-border flex flex-col shrink-0",
+        isMobile ? (selectedId ? "hidden" : "w-full") : "w-80 lg:w-96"
+      )}>
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-display font-semibold text-base">询盘中心</h2>
